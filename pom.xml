@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>io.tileverse.parquetry.geoserver</groupId>
+  <artifactId>parquetry-geoserver-parent</artifactId>
+  <version>${revision}</version>
+  <packaging>pom</packaging>
+
+  <name>Parquetry GeoServer :: Parent</name>
+  <description>GeoServer extensions for parquetry</description>
+  <url>https://tileverse.io</url>
+
+  <organization>
+    <name>Tileverse.io</name>
+    <url>https://tileverse.io</url>
+  </organization>
+  <licenses>
+    <license>
+      <name>GNU General Public License, version 2 or later</name>
+      <url>https://www.gnu.org/licenses/old-licenses/gpl-2.0.html</url>
+      <distribution>repo</distribution>
+      <comments>SPDX-License-Identifier: GPL-2.0-or-later</comments>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Gabriel Roldan</name>
+      <email>groldan@multivers.io</email>
+      <organization>Multiversio LLC</organization>
+      <organizationUrl>https://multivers.io</organizationUrl>
+    </developer>
+  </developers>
+
+  <modules>
+    <module>parquetry-geoserver</module>
+  </modules>
+
+  <scm>
+    <connection>scm:git:https://github.com/tileverse-io/parquetry-geoserver.git</connection>
+    <developerConnection>scm:git:git@github.com:tileverse-io/parquetry-geoserver.git</developerConnection>
+    <tag>HEAD</tag>
+    <url>https://github.com/tileverse-io/parquetry-geoserver</url>
+  </scm>
+
+  <issueManagement>
+    <system>GitHub Issues</system>
+    <url>https://github.com/tileverse-io/parquetry-geoserver/issues</url>
+  </issueManagement>
+
+  <distributionManagement>
+    <repository>
+      <id>central</id>
+      <url>https://central.sonatype.com/api/v1/publisher/deployments/upload</url>
+    </repository>
+    <snapshotRepository>
+      <id>central</id>
+      <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <properties>
+    <revision>1.0-SNAPSHOT</revision>
+    <!-- The parquetry engine this plugin builds on; resolved from Maven Central (release) or the snapshot repo below. -->
+    <parquetry.version>1.0-SNAPSHOT</parquetry.version>
+    <tileverse.version>2.0.0</tileverse.version>
+
+    <gs.version>3.0.0</gs.version>
+    <!-- Jetty used only by the test-scope embedded launcher (Start); matches GeoServer 3.0.0's Jetty. -->
+    <jetty.version>12.1.8</jetty.version>
+
+    <!-- GPG signing is off by default; the release pipeline flips it to false. -->
+    <gpg.skip>true</gpg.skip>
+    <maven.compiler.source>25</maven.compiler.source>
+    <maven.compiler.target>25</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <spotless.version>3.5.1</spotless.version>
+    <jacoco.version>0.8.14</jacoco.version>
+
+    <!-- JaCoCo argLine property (overridden by jacoco:prepare-agent when coverage profile is active) -->
+    <argLine/>
+    <!-- Append-only JVM args for the test forks. Set on the CLI to pass ad-hoc options without clobbering the
+         jacoco-owned @{argLine} or the preview flags, e.g. -DextraArgLine="-Xmx2g". Empty by default. -->
+    <extraArgLine/>
+  </properties>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.tileverse.parquetry</groupId>
+        <artifactId>parquetry-dependencies</artifactId>
+        <version>${parquetry.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <!-- Manages tileverse-storage module versions and converges its transitive deps (Jackson, JNA, etc.). -->
+      <dependency>
+        <groupId>io.tileverse</groupId>
+        <artifactId>tileverse-bom</artifactId>
+        <version>${tileverse.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <repositories>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>central-portal-snapshots</id>
+      <name>Central Portal Snapshots</name>
+      <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+    </repository>
+  </repositories>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>3.4.2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.15.0</version>
+          <configuration>
+            <release>25</release>
+            <parameters>true</parameters>
+            <compilerArgs>
+              <arg>--enable-preview</arg>
+            </compilerArgs>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>3.5.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.5.2</version>
+          <configuration>
+            <!-- @{argLine} lets jacoco:prepare-agent inject its agent when the coverage profile is active;
+                 ${extraArgLine} appends ad-hoc CLI JVM args (e.g. -DextraArgLine="-Xmx2g") to the fork. -->
+            <argLine>@{argLine} --enable-preview --enable-native-access=ALL-UNNAMED ${extraArgLine}</argLine>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>3.5.2</version>
+          <configuration>
+            <!-- @{argLine} lets jacoco:prepare-agent-integration inject its agent when the coverage profile is active;
+                 ${extraArgLine} appends ad-hoc CLI JVM args (e.g. -DextraArgLine="-Xmx2g") to the fork. -->
+            <argLine>@{argLine} --enable-preview --enable-native-access=ALL-UNNAMED ${extraArgLine}</argLine>
+            <!-- Aggregator modules (parent, BOMs, coverage-report) have no ITs; skip the IT phase there. -->
+            <failIfNoTests>false</failIfNoTests>
+            <failIfNoSpecifiedTests>false</failIfNoSpecifiedTests>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>${jacoco.version}</version>
+          <executions>
+            <execution>
+              <id>prepare-agent</id>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>prepare-agent-integration</id>
+              <goals>
+                <goal>prepare-agent-integration</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>report</id>
+              <goals>
+                <goal>report</goal>
+              </goals>
+              <phase>test</phase>
+            </execution>
+            <execution>
+              <id>report-integration</id>
+              <goals>
+                <goal>report-integration</goal>
+              </goals>
+              <phase>post-integration-test</phase>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>com.diffplug.spotless</groupId>
+          <artifactId>spotless-maven-plugin</artifactId>
+          <version>${spotless.version}</version>
+          <configuration>
+            <java>
+              <palantirJavaFormat>
+                <version>2.90.0</version>
+                <formatJavadoc>true</formatJavadoc>
+              </palantirJavaFormat>
+              <licenseHeader>
+                <content>/*
+ * (c) Copyright 2026 Multiversio LLC. All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ */</content>
+              </licenseHeader>
+              <removeUnusedImports/>
+              <importOrder>
+                <order>java,javax,org,com,io.tileverse.storage,io.tileverse.parquetry,</order>
+              </importOrder>
+            </java>
+            <pom>
+              <sortPom>
+                <expandEmptyElements>false</expandEmptyElements>
+              </sortPom>
+            </pom>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>apply</goal>
+              </goals>
+              <phase>validate</phase>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>flatten-maven-plugin</artifactId>
+          <version>1.6.0</version>
+          <executions>
+            <execution>
+              <id>flatten</id>
+              <goals>
+                <goal>flatten</goal>
+              </goals>
+              <phase>process-resources</phase>
+              <configuration>
+                <updatePomFile>true</updatePomFile>
+                <flattenMode>resolveCiFriendliesOnly</flattenMode>
+              </configuration>
+            </execution>
+            <execution>
+              <id>flatten.clean</id>
+              <goals>
+                <goal>clean</goal>
+              </goals>
+              <phase>clean</phase>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>3.3.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>3.11.2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>3.2.8</version>
+        </plugin>
+        <plugin>
+          <groupId>org.sonatype.central</groupId>
+          <artifactId>central-publishing-maven-plugin</artifactId>
+          <version>0.10.0</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <!-- Tolerate missing javadoc on builders and internal classes; report real javadoc errors. -->
+          <doclint>all,-missing</doclint>
+          <!-- No external javadoc links to resolve; skip auto-detection to keep the build offline-friendly. -->
+          <detectLinks>false</detectLinks>
+          <detectOfflineLinks>false</detectOfflineLinks>
+          <!-- Compiles against Java 25 with preview features (see maven-compiler-plugin). -->
+          <release>25</release>
+          <additionalJOptions>
+            <additionalJOption>--enable-preview</additionalJOption>
+          </additionalJOptions>
+        </configuration>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <!-- Central Portal Publishing -->
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <publishingServerId>central</publishingServerId>
+          <deploymentName>Parquetry GeoServer</deploymentName>
+          <autoPublish>true</autoPublish>
+          <waitUntil>published</waitUntil>
+          <waitMaxTime>3600</waitMaxTime>
+        </configuration>
+      </plugin>
+      <plugin>
+        <!-- GPG Signing (only when publishing) -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+            <phase>verify</phase>
+            <configuration>
+              <skip>${gpg.skip}</skip>
+              <gpgArguments>
+                <arg>--pinentry-mode</arg>
+                <arg>loopback</arg>
+              </gpgArguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <!--
+        Satisfies the enforcer dependencyConvergence rule: no transitive dependency on the non-test classpath
+        may resolve two different versions for the same GAV. Overrides go in this profile's dependencyManagement
+        so they're only paid when convergence is actually being checked. Active by default; opt out with
+        -DskipDependencyConvergence.
+      -->
+      <id>dependencyConvergence</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+        <property>
+          <name>!skipDependencyConvergence</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>enforce-dependency-convergence</id>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <dependencyConvergence>
+                      <excludedScopes>test</excludedScopes>
+                    </dependencyConvergence>
+                  </rules>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>qa</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.diffplug.spotless</groupId>
+            <artifactId>spotless-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>check</id>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+                <phase>validate</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>coverage</id>
+      <activation>
+        <property>
+          <name>coverage</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>
