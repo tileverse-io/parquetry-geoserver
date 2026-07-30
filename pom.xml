@@ -63,8 +63,7 @@
   <properties>
     <revision>1.0-SNAPSHOT</revision>
     <!-- The parquetry engine this plugin builds on; resolved from Maven Central (release) or the snapshot repo below. -->
-    <parquetry.version>1.0-RC</parquetry.version>
-    <tileverse.version>2.0.0</tileverse.version>
+    <parquetry.version>1.0-SNAPSHOT</parquetry.version>
 
     <gs.version>3.0.0</gs.version>
     <!-- Jetty used only by the test-scope embedded launcher (Start); matches GeoServer 3.0.0's Jetty. -->
@@ -87,18 +86,20 @@
   </properties>
   <dependencyManagement>
     <dependencies>
+      <!-- Versions of the parquetry modules. Also conveys the tileverse-storage management (converged
+           Jackson 2, JNA, etc.) that parquetry's root POM imports from tileverse-bom. -->
       <dependency>
         <groupId>io.tileverse.parquetry</groupId>
-        <artifactId>parquetry-dependencies</artifactId>
+        <artifactId>parquetry-bom</artifactId>
         <version>${parquetry.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      <!-- Manages tileverse-storage module versions and converges its transitive deps (Jackson, JNA, etc.). -->
+      <!-- Aligns the third-party versions the plugin shares with the engine (jts-core, tools.jackson, test stack). -->
       <dependency>
-        <groupId>io.tileverse</groupId>
-        <artifactId>tileverse-bom</artifactId>
-        <version>${tileverse.version}</version>
+        <groupId>io.tileverse.parquetry</groupId>
+        <artifactId>parquetry-dependencies</artifactId>
+        <version>${parquetry.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -117,7 +118,47 @@
       <name>Central Portal Snapshots</name>
       <url>https://central.sonatype.com/repository/maven-snapshots/</url>
     </repository>
+    <!-- GeoServer 3.0.0 / GeoTools 35.0 are published to the OSGeo release repo, not Maven Central. -->
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>osgeo-release</id>
+      <name>OSGeo Release Repository</name>
+      <url>https://repo.osgeo.org/repository/release/</url>
+    </repository>
+    <!-- Keep the OSGeo snapshot repo for development builds against GeoServer/GeoTools snapshots. -->
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>osgeo-snapshot</id>
+      <name>OSGeo Snapshot Repository</name>
+      <url>https://repo.osgeo.org/repository/snapshot/</url>
+    </repository>
   </repositories>
+
+  <!-- Spotless resolves the project classpath through the plugin repository chain when expanding wildcard
+       imports; without the OSGeo repo here it cannot see the GeoServer provided deps and logs warnings. -->
+  <pluginRepositories>
+    <pluginRepository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>osgeo-release</id>
+      <name>OSGeo Release Repository</name>
+      <url>https://repo.osgeo.org/repository/release/</url>
+    </pluginRepository>
+  </pluginRepositories>
 
   <build>
     <pluginManagement>

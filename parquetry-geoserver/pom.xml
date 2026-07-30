@@ -29,7 +29,6 @@
     <dependency>
       <groupId>io.tileverse.parquetry</groupId>
       <artifactId>parquetry-geotools</artifactId>
-      <version>${parquetry.version}</version>
     </dependency>
 
     <dependency>
@@ -119,33 +118,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <repositories>
-    <!-- GeoServer 3.0.0 / GeoTools 35.0 are published to the OSGeo release repo, not Maven Central. -->
-    <repository>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>osgeo-release</id>
-      <name>OSGeo Release Repository</name>
-      <url>https://repo.osgeo.org/repository/release/</url>
-    </repository>
-    <!-- Keep the OSGeo snapshot repo for development builds against GeoServer/GeoTools snapshots. -->
-    <repository>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <id>osgeo-snapshot</id>
-      <name>OSGeo Snapshot Repository</name>
-      <url>https://repo.osgeo.org/repository/snapshot/</url>
-    </repository>
-  </repositories>
 
   <build>
     <resources>
