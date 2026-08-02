@@ -36,6 +36,6 @@ public class StacConfiguration {
                 "geoparquet-stac",
                 StacDataStoreFactory.class,
                 StacDataStoreEditPanel.class,
-                "gs-icon-page-white-vector");
+                "img/icons/stac-geoparquet.svg");
     }
 }

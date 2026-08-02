@@ -36,6 +36,6 @@ public class IcebergConfiguration {
                 "iceberg",
                 IcebergDataStoreFactory.class,
                 GeoParquetDataStoreEditPanel.class,
-                "gs-icon-page-white-vector");
+                "img/icons/apache-iceberg.svg");
     }
 }
