@@ -25,10 +25,12 @@ final class DataStorePanels {
 
     static DataStorePanelInfo panel(
             String id, Class<?> factoryClass, Class<? extends StoreEditPanel> componentClass, String icon) {
+
         DataStorePanelInfo info = new DataStorePanelInfo();
         info.setId(id);
         info.setFactoryClass(factoryClass);
         info.setComponentClass(asPanelType(componentClass));
+        info.setIconBase(componentClass);
         info.setIcon(icon);
         return info;
     }

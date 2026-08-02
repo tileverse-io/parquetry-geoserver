@@ -2,7 +2,7 @@
   <id>DataStoreInfoImpl-1428db6f:19ea58c4651:-7fe1</id>
   <name>ne</name>
   <description>GeoParquet over S3 (the s3proxy endpoint); one layer per file (layer-grouping=file).</description>
-  <type>GeoParquet</type>
+  <type>Parquet</type>
   <enabled>true</enabled>
   <workspace>
     <id>WorkspaceInfoImpl-1428db6f:19ea58c4651:-7fe3</id>

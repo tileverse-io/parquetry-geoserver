@@ -52,7 +52,7 @@ profile in the GeoServer source tree (`src/web/app/pom.xml`).
 
    Match the JVM arguments to parquetry's `.mvn/jvm.config`.
 
-3. In the GeoServer UI, go to Stores > Add new store. "GeoParquet" appears in
+3. In the GeoServer UI, go to Stores > Add new store. "Parquet" appears in
    the vector data sources. Create a store with a `uri` pointing at a
    GeoParquet file (local path or `s3://`, `gs://`, `https://`, etc., per the
    tileverse storage backends), then publish a layer from it.
@@ -80,7 +80,7 @@ VM arguments:
 
 GeoServer comes up at <http://localhost:8080/geoserver> (override the port with
 `-Djetty.port=...`); type `stop` in the console to shut down. Then add a
-"GeoParquet" store as in step 3 above.
+"Parquet" store as in step 3 above.
 
 ## License
 

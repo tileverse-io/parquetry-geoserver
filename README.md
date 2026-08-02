@@ -43,7 +43,7 @@ Install it by unzipping into an existing GeoServer, then restart:
 unzip parquetry-geoserver-<version>-plugin.zip -d "$GEOSERVER_HOME/webapps/geoserver/WEB-INF/lib"
 ```
 
-In the GeoServer UI, go to **Stores > Add new store**; "GeoParquet", "Iceberg",
+In the GeoServer UI, go to **Stores > Add new store**; "Parquet", "Iceberg",
 and "STAC" appear among the vector data sources. See
 [parquetry-geoserver/README.md](parquetry-geoserver/README.md) for the store-edit
 panels, embedded-Jetty development launcher, and `jetty:run` instructions.

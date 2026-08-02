@@ -26,8 +26,8 @@ import org.eclipse.jetty.server.ServerConnector;
 
 /**
  * Embedded GeoServer launcher for IDE development. Runs the full GeoServer web application with the parquetry-geoserver
- * plugin on the classpath, which makes the "GeoParquet" store type available without deploying a war. Run it from an
- * IDE as a Java application (Run As &gt; Java Application).
+ * plugin on the classpath, which makes the "Parquet" store type available without deploying a war. Run it from an IDE
+ * as a Java application (Run As &gt; Java Application).
  *
  * <p>The plugin and GeoServer load only on a <b>Java 25 JVM started with {@code --enable-preview}</b> (plus parquetry's
  * foreign-memory native-access flags). Set these VM arguments in the run configuration:
