@@ -88,7 +88,7 @@ class PluginContextTest {
     void factoryIsDiscoverableAndNamed() {
         GeoParquetDataStoreFactory factory = new GeoParquetDataStoreFactory();
 
-        assertThat(factory.getDisplayName()).isEqualTo("GeoParquet");
+        assertThat(factory.getDisplayName()).isEqualTo("Parquet");
         assertThat(factory.isAvailable()).isTrue();
     }
 }

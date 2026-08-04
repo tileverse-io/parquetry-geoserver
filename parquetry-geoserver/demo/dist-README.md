@@ -117,7 +117,7 @@ curl "http://localhost:8080/geoserver/parquetry/wfs?service=WFS&version=2.0.0&re
 
 ## Add your own GeoParquet layers (REST API)
 
-The plugin registers a `GeoParquet` datastore type. Create stores and layers for your own
+The plugin registers a `Parquet` datastore type. Create stores and layers for your own
 datasets through the GeoServer REST API (the examples use the default `admin` / `geoserver`
 credentials). A store points at a single `.parquet` file, or at a directory of files (see
 [Directory stores](#directory-stores) below).
@@ -150,7 +150,7 @@ curl -u admin:geoserver -XPOST -H "Content-Type: application/xml" \
 ```bash
 curl -u admin:geoserver -XPOST -H "Content-Type: application/xml" \
   http://localhost:8080/geoserver/rest/workspaces/mydata/datastores \
-  -d '<dataStore><name>places</name><type>GeoParquet</type>
+  -d '<dataStore><name>places</name><type>Parquet</type>
         <connectionParameters>
           <entry key="geoparquet">file:///data/places.parquet</entry>
         </connectionParameters>
@@ -165,7 +165,7 @@ AWS you only need the region:
 ```bash
 curl -u admin:geoserver -XPOST -H "Content-Type: application/xml" \
   http://localhost:8080/geoserver/rest/workspaces/mydata/datastores \
-  -d '<dataStore><name>places</name><type>GeoParquet</type>
+  -d '<dataStore><name>places</name><type>Parquet</type>
         <connectionParameters>
           <entry key="geoparquet">s3://my-bucket/path/places.parquet</entry>
           <entry key="storage.provider">s3</entry>
