@@ -36,6 +36,6 @@ public class GeoParquetConfiguration {
                 "geoparquet",
                 GeoParquetDataStoreFactory.class,
                 GeoParquetDataStoreEditPanel.class,
-                "gs-icon-page-white-vector");
+                "img/icons/parquetry.svg");
     }
 }

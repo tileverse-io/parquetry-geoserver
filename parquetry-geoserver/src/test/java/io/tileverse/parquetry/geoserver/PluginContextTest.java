@@ -54,7 +54,7 @@ class PluginContextTest {
 
         assertThat(panel.getFactoryClass()).isEqualTo(GeoParquetDataStoreFactory.class);
         assertThat(panel.getComponentClass()).isEqualTo(GeoParquetDataStoreEditPanel.class);
-        assertThat(panel.getIcon()).isEqualTo("gs-icon-page-white-vector");
+        assertThat(panel.getIcon()).isEqualTo("img/icons/parquetry.svg");
     }
 
     @Test
@@ -63,7 +63,7 @@ class PluginContextTest {
 
         assertThat(panel.getFactoryClass()).isEqualTo(IcebergDataStoreFactory.class);
         assertThat(panel.getComponentClass()).isEqualTo(GeoParquetDataStoreEditPanel.class);
-        assertThat(panel.getIcon()).isEqualTo("gs-icon-page-white-vector");
+        assertThat(panel.getIcon()).isEqualTo("img/icons/apache-iceberg.svg");
     }
 
     @Test
@@ -72,7 +72,7 @@ class PluginContextTest {
 
         assertThat(panel.getFactoryClass()).isEqualTo(StacDataStoreFactory.class);
         assertThat(panel.getComponentClass()).isEqualTo(StacDataStoreEditPanel.class);
-        assertThat(panel.getIcon()).isEqualTo("gs-icon-page-white-vector");
+        assertThat(panel.getIcon()).isEqualTo("img/icons/stac-geoparquet.svg");
     }
 
     @Test

@@ -9,7 +9,7 @@
   </workspace>
   <connectionParameters>
     <entry key="namespace">http://stac-geoparquet</entry>
-    <entry key="geoparquet-stac">s3://naturalearth/index/items.parquet</entry>
+    <entry key="stac-geoparquet">s3://naturalearth/index/items.parquet</entry>
     <entry key="storage.s3.endpoint">http://s3proxy:80</entry>
     <entry key="storage.s3.region">us-east-1</entry>
     <entry key="storage.s3.force-path-style">true</entry>

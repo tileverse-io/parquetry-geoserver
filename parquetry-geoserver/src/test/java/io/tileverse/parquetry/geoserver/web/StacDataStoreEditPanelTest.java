@@ -52,7 +52,7 @@ class StacDataStoreEditPanelTest {
     @Test
     void derivesTheCheckedBackendsFromTheStoredParameterKeys() {
         Map<String, String> connectionParameters = Map.of(
-                "geoparquet-stac", "s3://bucket/catalog.json",
+                "stac-geoparquet", "s3://bucket/catalog.json",
                 "storage.s3.region", "us-east-1",
                 "storage.http.bearer-token", "secret");
 

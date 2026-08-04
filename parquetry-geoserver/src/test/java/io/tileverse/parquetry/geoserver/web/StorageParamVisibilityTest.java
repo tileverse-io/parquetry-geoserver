@@ -59,7 +59,7 @@ class StorageParamVisibilityTest {
     @Test
     void derivesSelectedGroupsFromPresentParameters() {
         Map<String, String> params = Map.of(
-                "geoparquet-stac", "s3://x/i.parquet",
+                "stac-geoparquet", "s3://x/i.parquet",
                 "storage.s3.region", "us-east-1",
                 "storage.caching.enabled", "true");
         assertThat(StorageParamVisibility.selectedGroupsFromParameters(params)).containsExactly("s3");
