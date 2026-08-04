@@ -72,7 +72,7 @@ class StoreConfigurationTest {
     void stacConfigurationBindsTheStacFactory() {
         DataStorePanelInfo panel = context.getBean("stacDataStorePanel", DataStorePanelInfo.class);
 
-        assertThat(panel.getId()).isEqualTo("geoparquet-stac");
+        assertThat(panel.getId()).isEqualTo("stac-geoparquet");
         assertThat(panel.getFactoryClass()).isEqualTo(StacDataStoreFactory.class);
         assertThat(panel.getComponentClass()).isEqualTo(StacDataStoreEditPanel.class);
         assertThat(panel.getIcon()).isEqualTo("img/icons/stac-geoparquet.svg");

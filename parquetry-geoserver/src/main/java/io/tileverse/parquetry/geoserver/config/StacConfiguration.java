@@ -33,7 +33,7 @@ public class StacConfiguration {
     @Bean
     DataStorePanelInfo stacDataStorePanel() {
         return DataStorePanels.panel(
-                "geoparquet-stac",
+                "stac-geoparquet",
                 StacDataStoreFactory.class,
                 StacDataStoreEditPanel.class,
                 "img/icons/stac-geoparquet.svg");
