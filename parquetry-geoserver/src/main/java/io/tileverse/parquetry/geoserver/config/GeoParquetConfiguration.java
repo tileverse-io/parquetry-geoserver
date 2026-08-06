@@ -31,9 +31,9 @@ import io.tileverse.parquetry.geotools.parquet.GeoParquetDataStoreFactory;
 public class GeoParquetConfiguration {
 
     @Bean
-    DataStorePanelInfo geoParquetDataStorePanel() {
+    DataStorePanelInfo parquetryGeoParquetDataStorePanel() {
         return DataStorePanels.panel(
-                "geoparquet",
+                "parquetry-parquet",
                 GeoParquetDataStoreFactory.class,
                 GeoParquetDataStoreEditPanel.class,
                 "img/icons/parquetry.svg");

@@ -50,9 +50,9 @@ class StoreConfigurationTest {
 
     @Test
     void geoParquetConfigurationBindsTheGeoParquetFactory() {
-        DataStorePanelInfo panel = context.getBean("geoParquetDataStorePanel", DataStorePanelInfo.class);
+        DataStorePanelInfo panel = context.getBean("parquetryGeoParquetDataStorePanel", DataStorePanelInfo.class);
 
-        assertThat(panel.getId()).isEqualTo("geoparquet");
+        assertThat(panel.getId()).isEqualTo("parquetry-parquet");
         assertThat(panel.getFactoryClass()).isEqualTo(GeoParquetDataStoreFactory.class);
         assertThat(panel.getComponentClass()).isEqualTo(GeoParquetDataStoreEditPanel.class);
         assertThat(panel.getIcon()).isEqualTo("img/icons/parquetry.svg");

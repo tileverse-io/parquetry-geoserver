@@ -50,7 +50,7 @@ class PluginContextTest {
 
     @Test
     void dataStorePanelBindsTheGeoParquetFactory() {
-        DataStorePanelInfo panel = context.getBean("geoParquetDataStorePanel", DataStorePanelInfo.class);
+        DataStorePanelInfo panel = context.getBean("parquetryGeoParquetDataStorePanel", DataStorePanelInfo.class);
 
         assertThat(panel.getFactoryClass()).isEqualTo(GeoParquetDataStoreFactory.class);
         assertThat(panel.getComponentClass()).isEqualTo(GeoParquetDataStoreEditPanel.class);
