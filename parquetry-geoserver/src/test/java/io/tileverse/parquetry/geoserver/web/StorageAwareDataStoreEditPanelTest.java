@@ -15,17 +15,79 @@ package io.tileverse.parquetry.geoserver.web;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.util.tester.WicketTester;
+import org.geoserver.web.data.store.ParamInfo;
 import org.geotools.api.data.DataAccessFactory;
+import org.geotools.api.data.DataAccessFactory.Param;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.tileverse.parquetry.geotools.parquet.GeoParquetDataStoreFactory;
 
 /**
- * Pins the fail-loud guard the ordered-key sourcing relies on. Sourcing the store's parameter order re-resolves the
- * store factory; an unresolvable factory must fail with a clear, store-named diagnostic rather than a
- * NullPointerException that would leave the store edit page with an opaque stack trace.
+ * Pins the two contracts of the base edit panel that hold without a running GeoServer: the custom-widget choice - a
+ * Duration-typed key gets the duration widget, the s3 region key gets the searchable dropdown, any other key falls
+ * through to GeoServer's stock input - and the fail-loud guard the ordered-key sourcing relies on. Sourcing the store's
+ * parameter order re-resolves the store factory; an unresolvable factory must fail with a clear, store-named diagnostic
+ * rather than a NullPointerException that would leave the store edit page with an opaque stack trace.
  */
 class StorageAwareDataStoreEditPanelTest {
+
+    private WicketTester tester;
+
+    @BeforeEach
+    void startTester() {
+        tester = new WicketTester();
+    }
+
+    @AfterEach
+    void stopTester() {
+        tester.destroy();
+    }
+
+    @Test
+    void buildsTheDurationWidgetForADurationTypedKey() {
+        Panel panel = customStoragePanel("storage.azure.max-retry-delay");
+
+        assertThat(panel).isInstanceOf(DurationParamPanel.class);
+    }
+
+    @Test
+    void buildsTheSearchableDropdownForTheS3RegionKey() {
+        Panel panel = customStoragePanel("storage.s3.region");
+
+        assertThat(panel).isInstanceOf(Select2ChoiceParamPanel.class);
+    }
+
+    @Test
+    void fallsThroughToTheStockInputForAnyOtherKey() {
+        assertThat(customStoragePanel("storage.azure.account-key")).isNull();
+        assertThat(customStoragePanel("namespace")).isNull();
+    }
+
+    private static Panel customStoragePanel(String paramKey) {
+        IModel<Map<String, Serializable>> paramsModel = Model.ofMap(new HashMap<>());
+        return StorageAwareDataStoreEditPanel.customStoragePanel("panel", paramsModel, paramInfo(paramKey));
+    }
+
+    /** The real {@link ParamInfo} for {@code paramKey}, resolved from the GeoParquet factory's declared parameters. */
+    private static ParamInfo paramInfo(String paramKey) {
+        Param[] parameters = new GeoParquetDataStoreFactory().getParametersInfo();
+        Param param = Arrays.stream(parameters)
+                .filter(candidate -> candidate.key.equals(paramKey))
+                .findFirst()
+                .orElseGet(() -> new Param(paramKey, String.class));
+        return new ParamInfo(param);
+    }
 
     @Test
     void requireResolvedFailsLoudNamingTheStoreWhenTheFactoryIsNull() {

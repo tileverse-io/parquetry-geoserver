@@ -213,26 +213,55 @@ abstract class StorageAwareDataStoreEditPanel extends DefaultDataStoreEditPanel 
 
     /**
      * Builds the input panel for one connection parameter. Subclasses override to contribute store-specific widgets
-     * (for example a provider selector) and defer to {@code super} for the shared cases: the s3-region autocomplete and
+     * (for example a provider selector) and defer to {@code super} for the shared cases: the custom storage widgets and
      * GeoServer's stock input for everything else.
      */
     protected Panel buildInputPanel(
             String componentId, IModel<Map<String, Serializable>> paramsModel, ParamInfo paramMetadata) {
-        if (S3_REGION_KEY.equals(paramMetadata.getName())) {
-            return s3Region(componentId, paramsModel, paramMetadata);
+        Panel custom = customStoragePanel(componentId, paramsModel, paramMetadata);
+        if (custom != null) {
+            return custom;
         }
         return super.getInputComponent(componentId, paramsModel, paramMetadata);
     }
 
-    private Select2ChoiceParamPanel<String> s3Region(
+    /**
+     * The custom widget for a storage parameter that outgrew GeoServer's stock inputs - the searchable s3-region
+     * dropdown and the duration widget for Duration-typed keys - or {@code null} for every parameter the stock input
+     * serves fine.
+     */
+    static Panel customStoragePanel(
+            String componentId, IModel<Map<String, Serializable>> paramsModel, ParamInfo paramMetadata) {
+        if (S3_REGION_KEY.equals(paramMetadata.getName())) {
+            return s3Region(componentId, paramsModel, paramMetadata);
+        }
+        if (StorageParamTypes.isDuration(paramMetadata.getName())) {
+            return durationPanel(componentId, paramsModel, paramMetadata);
+        }
+        return null;
+    }
+
+    private static Select2ChoiceParamPanel<String> s3Region(
             String componentId, IModel<Map<String, Serializable>> paramsModel, ParamInfo paramInfo) {
-        IModel<String> label = new ResourceModel(paramInfo.getName(), paramInfo.getName());
+        IModel<String> label = paramLabel(paramInfo);
         IModel<String> model = new MapModel<>(paramsModel, paramInfo.getName());
         List<String> options =
                 paramInfo.getOptions().stream().map(String::valueOf).sorted().toList();
         return Select2ChoiceParamPanel.ofStrings(componentId, label, model, options)
                 .allowCustomValues(true)
                 .setPlaceHolder("us-east-1");
+    }
+
+    private static DurationParamPanel durationPanel(
+            String componentId, IModel<Map<String, Serializable>> paramsModel, ParamInfo paramInfo) {
+        IModel<String> label = paramLabel(paramInfo);
+        IModel<String> model = new MapModel<>(paramsModel, paramInfo.getName());
+        return new DurationParamPanel(componentId, model, label);
+    }
+
+    /** The field label GeoServer resolves for a parameter: the resource-bundle entry for its key, or the key itself. */
+    private static IModel<String> paramLabel(ParamInfo paramInfo) {
+        return new ResourceModel(paramInfo.getName(), paramInfo.getName());
     }
 
     @Override
